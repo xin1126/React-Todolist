@@ -6,7 +6,7 @@ class App extends Component {
   state = {
     value: '',
     data: [],
-    test: true
+    tempData: [],
   }
 
   inputValue = (e) => this.setState({ value: e.target.value })
@@ -19,10 +19,20 @@ class App extends Component {
         complete: false
       }],
       value: ''
+    }, () => {
+      this.setState({
+        tempData: this.state.data,
+      })
     })
   }
 
-  deleteData = (e) => this.setState({ data: this.state.data.filter(item => item.id !== Number(e.target.getAttribute('data-id'))) })
+  deleteData = (e) => this.setState({
+    data: this.state.data.filter(item => item.id !== Number(e.target.getAttribute('data-id')))
+  }, () => {
+    this.setState({
+      tempData: this.state.data,
+    })
+  })
 
   onChange = (e) => {
     const tempData = [...this.state.data]
@@ -36,6 +46,28 @@ class App extends Component {
     })
   }
 
+  updateData = (status) => {
+    if (status === 'complete') {
+      this.setState({
+        tempData: this.state.data,
+      })
+    } else if (status === 'completed') {
+      this.setState({
+        tempData: this.state.data.filter(item => item.complete === true),
+      })
+    } else if (status === 'undone') {
+      this.setState({
+        tempData: this.state.data.filter(item => item.complete === false),
+      })
+    }
+  }
+
+  complete = () => this.updateData('complete')
+
+  completed = () => this.updateData('completed')
+
+  undone = () => this.updateData('undone')
+
   render () {
     return (
       <div className="App">
@@ -47,8 +79,13 @@ class App extends Component {
           </div>
           {this.state.data.length !== 0 &&
             <div>
+              <div className="text-center">
+                <button onClick={this.complete} className="btn btn-primary me-2">全部</button>
+                <button onClick={this.completed} className="btn btn-success me-2">已完成</button>
+                <button onClick={this.undone} className="btn btn-secondary">未完成</button>
+              </div>
               <ul>
-                {this.state.data.map(item => (
+                {this.state.tempData.map(item => (
                   <li className="d-flex align-items-center mb-3" key={item.id}>
                     <div className={classNames({ 'text-decoration-line-through': item.complete })}>
                       <input type="checkbox" className="me-1" onChange={this.onChange} data-id={item.id} checked={item.complete} />{item.value}
