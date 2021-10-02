@@ -1,6 +1,63 @@
 import React, { Component } from 'react'
 import classNames from 'classnames';
 import './scss/all.scss'
+import styled from 'styled-components';
+
+const Main = styled.main`
+  max-width: 800px;
+  margin: 1rem auto 0;
+`
+
+const Title = styled.h2`
+  font-weight: bolder;
+  text-align: center;
+`
+
+const List = styled.div`
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+`
+
+const InputGroup = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-bottom: 1rem;
+`
+
+const Input = styled.input`
+  width: 80%;
+  padding: 0.375rem 0.75rem;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+  color: #212529;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: 1px solid #ced4da;
+  appearance: none;
+  border-radius: 0.25rem;
+`
+
+const Button = styled.button`
+  display: inline-block;
+  font-weight: 400;
+  line-height: 1.5;
+  color: #fff;
+  background-color: ${props => props.theme.colors[props.color]};
+  border-color: ${props => props.color};
+  text-align: center;
+  text-decoration: none;
+  vertical-align: middle;
+  cursor: pointer;
+  user-select: none;
+  border: 1px solid transparent;
+  padding: 0.375rem 0.75rem;
+  font-size: 1rem;
+  border-radius: 0.25rem;
+  margin-right: 0.5rem;
+`
 
 class App extends Component {
   state = {
@@ -70,33 +127,33 @@ class App extends Component {
 
   render () {
     return (
-      <div className="App">
-        <main className="container mt-5">
-          <h2 className="fw-bold text-center">To Do list</h2>
-          <div className="input-group mb-3">
-            <input type="text" className="form-control" placeholder="請輸入代辦事項" value={this.state.value} onChange={this.inputValue} />
-            <button className="btn btn-primary" type="button" id="button-addon2" onClick={this.addData}>新增</button>
-          </div>
+      <div className="App" >
+        <Main>
+          <Title>To Do list</Title>
+          <InputGroup>
+            <Input type="text" placeholder="請輸入代辦事項" value={this.state.value} onChange={this.inputValue} />
+            <Button color='primary' type="button" onClick={this.addData}>新增</Button>
+          </InputGroup>
           {this.state.data.length !== 0 &&
             <div>
               <div className="text-center">
-                <button onClick={this.complete} className="btn btn-primary me-2">全部</button>
-                <button onClick={this.completed} className="btn btn-success me-2">已完成</button>
-                <button onClick={this.undone} className="btn btn-secondary">未完成</button>
+                <Button onClick={this.complete} color='primary' type="button">全部</Button>
+                <Button onClick={this.completed} color='success' type="button">已完成</Button>
+                <Button onClick={this.undone} color='secondary' type="button">未完成</Button>
               </div>
               <ul>
                 {this.state.tempData.map(item => (
-                  <li className="d-flex align-items-center mb-3" key={item.id}>
+                  <List key={item.id}>
                     <div className={classNames({ 'text-decoration-line-through': item.complete })}>
                       <input type="checkbox" className="me-1" onChange={this.onChange} data-id={item.id} checked={item.complete} />{item.value}
                     </div>
-                    <button className="btn btn-danger ms-auto" onClick={this.deleteData} data-id={item.id}>刪除</button>
-                  </li>
+                    <Button className="ms-auto" color='danger' onClick={this.deleteData} data-id={item.id} type="button">刪除</Button>
+                  </List>
                 ))}
               </ul>
             </div>
           }
-        </main>
+        </Main>
       </div >
     )
   }

@@ -3,10 +3,22 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import { ThemeProvider } from 'styled-components';
+
+const theme = {
+  colors: {
+    primary: '#3B82F6',
+    secondary: '#6B7280',
+    success: '#10B981',
+    danger: '#EF4444',
+  }
+}
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <ThemeProvider theme={theme}>
+      <App />
+    </ThemeProvider >
   </React.StrictMode>,
   document.getElementById('root')
 );
