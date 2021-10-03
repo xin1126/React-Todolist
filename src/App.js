@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { Component, useState, useEffect } from 'react'
 import classNames from 'classnames';
 import './scss/all.scss'
 import styled from 'styled-components';
@@ -16,13 +16,6 @@ const Title = styled.h2`
 const List = styled.div`
   display: flex;
   align-items: center;
-  margin-bottom: 1rem;
-`
-
-const InputGroup = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
   margin-bottom: 1rem;
 `
 
@@ -59,101 +52,93 @@ const Button = styled.button`
   margin-right: 0.5rem;
 `
 
-class App extends Component {
-  state = {
-    value: '',
-    data: [],
-    tempData: [],
+const Todo = () => {
+  const [todos, setTodo] = useState([]);
+
+  const [tempTodos, setTempTodo] = useState([]);
+
+  const [value, setValue] = useState('');
+
+  const addData = () => {
+    setTodo([...todos, {
+      id: new Date().getTime(),
+      value: value,
+      complete: false
+    }])
+    setValue('')
   }
 
-  inputValue = (e) => this.setState({ value: e.target.value })
-
-  addData = () => {
-    this.setState({
-      data: [...this.state.data, {
-        id: new Date().getTime(),
-        value: this.state.value,
-        complete: false
-      }],
-      value: ''
-    }, () => {
-      this.setState({
-        tempData: this.state.data,
-      })
-    })
+  const inputValue = (e) => {
+    setValue(e.target.value)
+    console.log(e);
   }
 
-  deleteData = (e) => this.setState({
-    data: this.state.data.filter(item => item.id !== Number(e.target.getAttribute('data-id')))
-  }, () => {
-    this.setState({
-      tempData: this.state.data,
-    })
-  })
-
-  onChange = (e) => {
-    const tempData = [...this.state.data]
-    tempData.forEach(item => {
+  const onChange = (e) => {
+    todos.forEach(item => {
       if (item.id === Number(e.target.getAttribute('data-id'))) {
         item.complete = e.target.checked
       }
     })
-    this.setState({
-      data: tempData,
-    })
+    setTodo([...todos])
   }
 
-  updateData = (status) => {
-    if (status === 'complete') {
-      this.setState({
-        tempData: this.state.data,
-      })
-    } else if (status === 'completed') {
-      this.setState({
-        tempData: this.state.data.filter(item => item.complete === true),
-      })
-    } else if (status === 'undone') {
-      this.setState({
-        tempData: this.state.data.filter(item => item.complete === false),
-      })
+  const deleteData = (e) => setTodo([...todos.filter(item => item.id !== Number(e.target.getAttribute('data-id')))])
+
+  const updateData = (e) => {
+    const status = e.target.getAttribute('color')
+    console.log(e.target.getAttribute('color'));
+    switch (status) {
+      case 'primary':
+        setTempTodo([...todos])
+        break;
+      case 'success':
+        setTempTodo([...todos.filter(item => item.complete === true)])
+        break;
+      case 'secondary':
+        setTempTodo([...todos.filter(item => item.complete === false)])
+        break;
+      default:
     }
   }
 
-  complete = () => this.updateData('complete')
+  useEffect(() => {
+    setTempTodo(todos)
+  }, [todos]);
 
-  completed = () => this.updateData('completed')
+  return (
+    <Main>
+      <Title>To Do list</Title>
+      <Input type="text" placeholder="請輸入代辦事項" value={value} onChange={inputValue} />
+      <Button color='primary' type="button" onClick={addData}>新增</Button>
+      {todos.length !== 0 &&
+        <div>
+          <div className="text-center">
+            <Button onClick={updateData} color='primary' type="button">全部</Button>
+            <Button onClick={updateData} color='success' type="button">已完成</Button>
+            <Button onClick={updateData} color='secondary' type="button">未完成</Button>
+          </div>
+          <ul>
+            {tempTodos.map(item => (
+              <List key={item.id}>
+                <div className={classNames({ 'text-decoration-line-through': item.complete })}>
+                  <input type="checkbox" className="me-1" onChange={onChange} data-id={item.id} checked={item.complete} />
+                  {item.value}
+                </div>
+                <Button className="ms-auto" color='danger' onClick={deleteData} data-id={item.id} type="button">刪除</Button>
+              </List>
+            ))}
+          </ul>
+        </div>
+      }
+    </Main>
+  )
+}
 
-  undone = () => this.updateData('undone')
-
+class App extends Component {
   render () {
     return (
       <div className="App" >
-        <Main>
-          <Title>To Do list</Title>
-          <InputGroup>
-            <Input type="text" placeholder="請輸入代辦事項" value={this.state.value} onChange={this.inputValue} />
-            <Button color='primary' type="button" onClick={this.addData}>新增</Button>
-          </InputGroup>
-          {this.state.data.length !== 0 &&
-            <div>
-              <div className="text-center">
-                <Button onClick={this.complete} color='primary' type="button">全部</Button>
-                <Button onClick={this.completed} color='success' type="button">已完成</Button>
-                <Button onClick={this.undone} color='secondary' type="button">未完成</Button>
-              </div>
-              <ul>
-                {this.state.tempData.map(item => (
-                  <List key={item.id}>
-                    <div className={classNames({ 'text-decoration-line-through': item.complete })}>
-                      <input type="checkbox" className="me-1" onChange={this.onChange} data-id={item.id} checked={item.complete} />{item.value}
-                    </div>
-                    <Button className="ms-auto" color='danger' onClick={this.deleteData} data-id={item.id} type="button">刪除</Button>
-                  </List>
-                ))}
-              </ul>
-            </div>
-          }
-        </Main>
+        <Todo />
       </div >
     )
   }
