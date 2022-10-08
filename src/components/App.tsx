@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
 import '../scss/all.scss'
 import styled from 'styled-components';
-import SetTodo from './SetTodo.js'
-import TodoList from './TodoList.js'
+import SetTodo from './SetTodo'
+import TodoList from './TodoList'
 
 const Main = styled.main`
   max-width: 800px;
@@ -14,8 +14,8 @@ const Title = styled.h2`
   text-align: center;
 `
 
-const Todo = () => {
-  const [todos, setTodo] = useState([]);
+const Todo: React.FC = () => {
+  const [todos, setTodo] = useState<Todo[]>([]);
 
   return (
     <Main>
@@ -26,7 +26,7 @@ const Todo = () => {
   )
 }
 
-const App = () => {
+const App: React.FC = () => {
   return (
     <div className="App" >
       <Todo />

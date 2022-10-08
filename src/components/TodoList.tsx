@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react'
 import classNames from 'classnames';
 import styled from 'styled-components';
-import Button from '../style/Button.js';
+import Button from '../style/Button';
+import React from 'react';
 
 const List = styled.div`
   display: flex;
@@ -9,35 +10,45 @@ const List = styled.div`
   margin-bottom: 1rem;
 `
 
-const TodoList = ({ todos, setTodo }) => {
-  const [tempTodos, setTempTodo] = useState([]);
+interface TodosProps {
+  todos: Array<Todo>;
+  setTodo: (todos: React.SetStateAction<Todo[]>) => void;
+}
 
-  const updateData = (e) => {
-    const status = e.target.getAttribute('color')
+const TodoList: React.FC<TodosProps> = ({ todos, setTodo }) => {
+  const [tempTodos, setTempTodo] = useState<Todo[]>([]);
+
+  const updateData = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const el = e.target as HTMLButtonElement
+    const status = el.getAttribute('color')
     switch (status) {
       case 'primary':
         setTempTodo([...todos])
         break;
       case 'success':
-        setTempTodo([...todos.filter(item => item.complete === true)])
+        setTempTodo([...todos.filter(item => item.complete)])
         break;
       case 'secondary':
-        setTempTodo([...todos.filter(item => item.complete === false)])
+        setTempTodo([...todos.filter(item => !item.complete)])
         break;
       default:
     }
   }
 
-  const onChange = (e) => {
+  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const el = e.target as HTMLInputElement
     todos.forEach(item => {
-      if (item.id === Number(e.target.getAttribute('data-id'))) {
-        item.complete = e.target.checked
+      if (String(item.id) === el.getAttribute('data-id')) {
+        item.complete = el.checked
       }
     })
     setTodo([...todos])
   }
 
-  const deleteData = (e) => setTodo([...todos.filter(item => item.id !== Number(e.target.getAttribute('data-id')))])
+  const deleteData = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const el = e.target as HTMLButtonElement
+    setTodo([...todos.filter(item => String(item.id) !== el.getAttribute('data-id'))])
+  }
 
   useEffect(() => {
     setTempTodo(todos)

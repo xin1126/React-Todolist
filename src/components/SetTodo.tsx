@@ -1,6 +1,7 @@
+import React from 'react';
 import { useState } from 'react'
 import styled from 'styled-components';
-import Button from '../style/Button.js';
+import Button from '../style/Button';
 
 const Input = styled.input`
   width: 80%;
@@ -16,10 +17,15 @@ const Input = styled.input`
   border-radius: 0.25rem;
 `
 
-const SetTodo = ({ data, setTodo }) => {
+interface SetTodoProps {
+  data: Array<Todo>;
+  setTodo: (todos: React.SetStateAction<Todo[]>) => void;
+}
+
+const SetTodo: React.FC<SetTodoProps> = ({ data, setTodo }) => {
   const [value, setValue] = useState('');
 
-  const inputValue = (e) => {
+  const inputValue = (e: React.ChangeEvent<HTMLInputElement>) => {
     setValue(e.target.value)
   }
 

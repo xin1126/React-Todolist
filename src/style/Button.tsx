@@ -1,12 +1,17 @@
 import styled from 'styled-components';
 
+interface Props {
+  color: string,
+  theme: any
+}
+
 const Button = styled.button`
   display: inline-block;
   font-weight: 400;
   line-height: 1.5;
   color: #fff;
-  background-color: ${props => props.theme.colors[props.color]};
-  border-color: ${props => props.color};
+  background-color: ${(props: Props) => props.theme.colors[props.color]};
+  border-color: ${(props: Props) => props.color};
   text-align: center;
   text-decoration: none;
   vertical-align: middle;
